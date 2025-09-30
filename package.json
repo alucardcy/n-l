@@ -1,0 +1,17 @@
+{
+  "name": "nodes_links",
+  "version": "1.0.0",
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"yarn workspace server dev\" \"yarn workspace client dev\"",
+    "start": "concurrently \"yarn workspace server dev\" \"yarn workspace client start\"",
+    "build": "yarn workspace client build"
+  },
+  "devDependencies": {
+    "concurrently": "^7.6.0"
+  }
+}
