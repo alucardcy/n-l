@@ -1,5 +1,5 @@
 import express from "express";
-import { getActivities, getAdjacencyMatrix, parseLinks } from "./db";
+import { getActivities, getActivityLinks, getAdjacencyMatrix, parseLinks } from "./db";
 
 
 const app = express();
@@ -12,6 +12,7 @@ app.get("/", (req, res) => {
 
 app.get("/activity", async (req, res) => {
     try {
+        console.log('Fetching activities');
         const activities = await getActivities();
         res.json(activities);
     } catch (error) {
@@ -43,6 +44,25 @@ app.get("/links", async (req, res) => {
         res.status(500).send("Error processing links");
     }
 });
+
+
+app.get("/activity/:index/links", async (req, res) => {
+    const index = parseInt(req.params.index);
+    if (isNaN(index)) {
+        res.status(400).send("Invalid activity index");
+        return;
+    }
+
+    try {
+        const links = await getActivityLinks(index);
+        res.json(links);
+    } catch (error) {
+        console.log(error);
+        res.status(500).send("Error processing activity links");
+    }
+
+});
+
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);

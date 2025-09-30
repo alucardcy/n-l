@@ -13,13 +13,15 @@
     "csv-parser": "^3.2.0",
     "express": "^5.1.0",
     "lodash": "^4.17.21",
-    "lodash.camelcase": "^4.3.0"
+    "lodash.camelcase": "^4.3.0",
+    "node-cache": "^5.1.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/lodash.camelcase": "^4.3.9",
     "@types/node": "^24.6.0",
+    "@types/node-cache": "^4.2.5",
     "nodemon": "^3.1.10",
     "tsx": "^4.20.6",
     "typescript": "^5.9.2"
