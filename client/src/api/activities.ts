@@ -8,7 +8,6 @@ type Props = {
 }
 const getActivities = async ({ from, to }: Props): Promise<Activity[]> => {
     const { data } = await axiosInstance.get("/activities", { params: { from, to } })
-    // const { data } = await axiosInstance.get("/activities?from=2023-01-01&to=2023-12-31")
     return data
 }
 

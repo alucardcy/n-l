@@ -2,12 +2,13 @@ import fs from "fs";
 import csv from "csv-parser";
 import camelCase from "lodash.camelcase";
 import cache from "./cache";
-import { Node, Activity, Nodes } from "@nodes-links/types";
+import { Node, Activity, Nodes, Link } from "@nodes-links/types";
 
-
+// just assuming this would have been db calls in a real app
 
 const CACHE_ACTIVITIES_KEY = 'activities';
 const CACHE_MATRIX_KEY = 'matrix';
+const CACHE_LINKS_KEY = 'links';
 
 export function getActivities(): Promise<Activity[]> {
     return new Promise((resolve, reject) => {
@@ -98,22 +99,37 @@ export function getAdjacencyMatrix(): Promise<Number[][]> {
             });
     });
 }
-export function parseLinks(activities: Activity[], matrix: Number[][]): Nodes {
+export function parseLinks(activities: Activity[], matrix: Number[][]): { nodes: Nodes, links: Link[] } {
 
+    const cached = cache.get<{ nodes: Nodes, links: Link[] }>(CACHE_LINKS_KEY);
+    if (cached) {
+        console.log('Returning cached links');
+        return cached;
+    }
     const nodes: Nodes = {}
+    const links: Link[] = [];
 
     for (let i = 0; i < matrix.length; i++) {
+        nodes[activities[i].nodeId] = {
+            index: i,
+            nodeId: activities[i].nodeId,
+            startDate: activities[i].startDate,
+            endDate: activities[i].endDate,
+            links: []
+        };
         for (let j = 0; j < matrix[i].length; j++) {
             if (matrix[i][j] === 1) {
-                nodes[activities[i].nodeId] = {
-                    index: i,
-                    nodeId: activities[i].nodeId,
-                    links: nodes[activities[i].nodeId]?.links ? [...nodes[activities[i].nodeId].links, activities[j]] : [activities[j]]
-                };
+                //welp I grouped them by nodeId but I guess it wasn't necessary
+                nodes[activities[i].nodeId].links.push(activities[j]);
+                links.push({
+                    source: activities[i].nodeId,
+                    target: activities[j].nodeId
+                });
             }
         }
     }
-    return nodes;
+    cache.set(CACHE_LINKS_KEY, { nodes, links });
+    return { nodes, links };
 
 }
 
@@ -128,6 +144,8 @@ export function getActivityLinks(activityIndex: number): Promise<Node> {
 
             const node: Node = {
                 index: activityIndex,
+                startDate: activityByIndex?.startDate as Date,
+                endDate: activityByIndex?.endDate as Date,
                 nodeId: activityByIndex ? activityByIndex.nodeId : -1,
                 links: []
             };

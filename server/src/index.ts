@@ -53,8 +53,9 @@ app.get("/links", async (req, res) => {
     try {
         const activities = await getActivities();
         const matrix = await getAdjacencyMatrix();
-        const links = parseLinks(activities, matrix);
-        res.json(links);
+        const { nodes, links } = parseLinks(activities, matrix);
+        // badum tssss
+        res.status(200).json({ nodes, links });
     } catch (error) {
         console.log(error);
 

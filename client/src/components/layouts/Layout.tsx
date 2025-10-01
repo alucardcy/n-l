@@ -1,6 +1,6 @@
-import { AppShell, Burger, Flex } from "@mantine/core"
+import { AppShell, Burger, Flex, NavLink, Stack } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
-import { Outlet } from "react-router"
+import { Link, Outlet } from "react-router"
 
 const Layout = () => {
     const [opened, { toggle }] = useDisclosure();
@@ -25,7 +25,11 @@ const Layout = () => {
                 </Flex>
             </AppShell.Header>
             <AppShell.Navbar>
-                Navbar
+                <Stack justify="center" align="center" gap={0}>
+                    <NavLink to={"/"} label="Home" component={Link} />
+                    <NavLink to={"/activities"} label="Activities" component={Link} />
+                    <NavLink to={"/links"} label="Links" component={Link} />
+                </Stack>
             </AppShell.Navbar>
             <AppShell.Main>
                 <Outlet />

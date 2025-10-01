@@ -1,6 +1,7 @@
 import Layout from "./components/layouts/Layout";
 import Index from "./pages";
-import Activities from "./pages/activities";
+import Activities from "./pages/Activities";
+import ActivityLinks from "./pages/ActivityLinks";
 
 export default [
     {
@@ -14,6 +15,10 @@ export default [
             {
                 path: "activities",
                 Component: Activities
+            },
+            {
+                path: "links",
+                Component: ActivityLinks
             }
         ]
     }
