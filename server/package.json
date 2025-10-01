@@ -14,7 +14,8 @@
     "express": "^5.1.0",
     "lodash": "^4.17.21",
     "lodash.camelcase": "^4.3.0",
-    "node-cache": "^5.1.2"
+    "node-cache": "^5.1.2",
+    "@nodes-links/types": "1.0.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",

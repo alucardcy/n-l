@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "workspaces": [
     "server",
-    "client"
+    "client",
+    "types"
   ],
   "private": true,
   "scripts": {
-    "dev": "concurrently \"yarn workspace server dev\" \"yarn workspace client dev\"",
-    "start": "concurrently \"yarn workspace server dev\" \"yarn workspace client start\"",
-    "build": "yarn workspace client build"
+    "dev": "concurrently \"yarn workspace @nodes-links/types dev\" \"yarn workspace server dev\" \"yarn workspace client dev\"",
+    "start": "concurrently \"yarn workspace @nodes-links/types dev\" \"yarn workspace server dev\" \"yarn workspace client start\"",
+    "build": "yarn workspace @nodes-links/types build && yarn workspace client build"
   },
   "devDependencies": {
     "concurrently": "^7.6.0"

@@ -2,12 +2,9 @@ import fs from "fs";
 import csv from "csv-parser";
 import camelCase from "lodash.camelcase";
 import cache from "./cache";
+import { Node, Activity, Nodes } from "@nodes-links/types";
 
-type Activity = {
-    nodeId: number;
-    StartDate: Date
-    EndDate: Date
-}
+
 
 const CACHE_ACTIVITIES_KEY = 'activities';
 const CACHE_MATRIX_KEY = 'matrix';
@@ -82,17 +79,6 @@ export function getAdjacencyMatrix(): Promise<Number[][]> {
             });
     });
 }
-
-type Nodes = {
-    [key: number]: Node;
-}
-
-type Node = {
-    index: number;
-    nodeId: number;
-    links: Activity[];
-}
-
 export function parseLinks(activities: Activity[], matrix: Number[][]): Nodes {
 
     const nodes: Nodes = {}

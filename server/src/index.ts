@@ -1,20 +1,24 @@
 import express from "express";
+import cors from "cors";
 import { getActivities, getActivityLinks, getAdjacencyMatrix, parseLinks } from "./db";
 
 
 const app = express();
 const port = 3000;
 
+
+app.use(cors())
+
 app.get("/", (req, res) => {
     res.send("Hello World!");
 });
 
 
-app.get("/activity", async (req, res) => {
+app.get("/activities", async (req, res) => {
     try {
         console.log('Fetching activities');
         const activities = await getActivities();
-        res.json(activities);
+        res.status(200).json(activities);
     } catch (error) {
         res.status(500).send("Error reading activities");
     }
