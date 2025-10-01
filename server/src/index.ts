@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
-import { getActivities, getActivityLinks, getAdjacencyMatrix, parseLinks } from "./db";
+import { getActivities, getActivitiesByRange, getActivityLinks, getAdjacencyMatrix, parseLinks } from "./db";
+import dayjs from "dayjs";
 
 
 const app = express();
@@ -16,6 +17,18 @@ app.get("/", (req, res) => {
 
 app.get("/activities", async (req, res) => {
     try {
+        const { from, to } = req.query;
+        if (from && to) {
+            if (dayjs(from as string).isValid() && dayjs(to as string).isValid()) {
+                console.log('Fetching activities with date range');
+                const activities = await getActivitiesByRange(from as string, to as string);
+                res.status(200).json(activities);
+                return;
+            } else {
+                res.status(400).send("Invalid date format.");
+            }
+        }
+
         console.log('Fetching activities');
         const activities = await getActivities();
         res.status(200).json(activities);

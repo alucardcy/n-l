@@ -38,6 +38,25 @@ export function getActivities(): Promise<Activity[]> {
     });
 }
 
+
+// assume it would be a sql query with date range filtering
+export function getActivitiesByRange(from: string, to: string): Promise<Activity[]> {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const activities = await getActivities();
+            // filter by date range
+            const filtered = activities.filter(activity => {
+                const activityStart = new Date(activity.startDate);
+                const activityEnd = new Date(activity.endDate);
+                return activityStart >= new Date(from) && activityEnd <= new Date(to);
+            });
+            resolve(filtered);
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
 // TODO cache it
 export function getActivityByIndex(index: number): Promise<Activity | null> {
     return new Promise(async (resolve, reject) => {

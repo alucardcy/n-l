@@ -1,6 +1,7 @@
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from "react-router";
 import "@mantine/core/styles.css"
+import '@mantine/dates/styles.css';
 import { MantineProvider } from "@mantine/core";
 import routes from './routes';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
