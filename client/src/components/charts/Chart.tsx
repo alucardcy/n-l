@@ -14,7 +14,9 @@ const Chart = ({ option, ref, style }: Props) => {
         if (!internalRef.current) return;
         if (!ref.current) {
             ref.current = echarts.init(internalRef.current, undefined, { renderer: "canvas" });
-            const onResize = () => ref.current?.resize();
+            const onResize = () => {
+                ref.current?.resize()
+            };
             window.addEventListener("resize", onResize);
 
 
