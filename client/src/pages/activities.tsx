@@ -1,4 +1,4 @@
-import { Button, Flex, NumberInput, TextInput } from "@mantine/core";
+import { Button, Divider, Flex, Group, NumberInput, TextInput } from "@mantine/core";
 import { useGetActivities } from "../api/activities";
 import { DatePickerInput } from "@mantine/dates";
 import React, { useEffect, useMemo, useRef, useState } from "react";
@@ -21,23 +21,8 @@ const Activities = () => {
         if (!data) return [];
 
 
-        if (duration > 0) {
-            return data.filter(activity => {
-
-                const startDate = dayjs(activity.startDate);
-                const endDate = dayjs(activity.endDate);
-                const durationDays = endDate.diff(startDate, 'day');
-                if (durationDays >= duration)
-                    return {
-                        name: `Node ${activity.nodeId}`,
-                        value: durationDays,
-                        nodeId: activity.nodeId,
-                        duration: durationDays
-                    };
-            })
-        }
-
-        return data.map(activity => {
+        // map data for pie
+        const result = data.map(activity => {
             const startDate = dayjs(activity.startDate);
             const endDate = dayjs(activity.endDate);
             const durationDays = endDate.diff(startDate, 'day');
@@ -49,6 +34,12 @@ const Activities = () => {
                 duration: durationDays
             };
         });
+
+        // filter by duration if set
+        if (duration > 0) {
+            return result.filter(item => item.duration >= duration);
+        }
+        return result;
     }, [data, duration]);
 
 
@@ -58,7 +49,6 @@ const Activities = () => {
     const option = useMemo(() => {
 
         if (!pieData.length) return {};
-
 
         return {
             // title: {
@@ -130,18 +120,22 @@ const Activities = () => {
             <Flex direction="column" gap="md" align="center">
                 <h1>Activities</h1>
                 <h3>Choose a date range to display pie </h3>
-                <DatePickerInput
-                    style={{ minWidth: 300 }}
-                    clearable
-                    label="Choose a date range"
-                    type="range"
-                    value={dateRange}
-                    onChange={setDateRange}
-                />
+                <Group>
 
-                <NumberInput label="Enter duration in days" value={duration} onChange={(value) => setDuration(value as number)} />
+                    <DatePickerInput
+                        style={{ minWidth: 300 }}
+                        clearable
+                        label="Choose a date range"
+                        type="range"
+                        value={dateRange}
+                        onChange={setDateRange}
+                    />
+
+                    <NumberInput label="Enter duration in days" value={duration} onChange={(value) => setDuration(value as number)} />
+                </Group>
             </Flex>
 
+            <Divider my={4} />
 
             <div style={{ marginTop: 24 }}>
                 <div ref={chartElRef} style={{ width: "100%", height: 500 }} />
