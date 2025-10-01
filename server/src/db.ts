@@ -3,8 +3,12 @@ import csv from "csv-parser";
 import camelCase from "lodash.camelcase";
 import cache from "./cache";
 import { Node, Activity, Nodes, Link } from "@nodes-links/types";
+import dayjs from "dayjs";
+import CustomParseFormat from 'dayjs/plugin/customParseFormat'
 
-// just assuming this would have been db calls in a real app
+dayjs.extend(CustomParseFormat);
+
+//  assuming this would have been db calls in a real app
 
 const CACHE_ACTIVITIES_KEY = 'activities';
 const CACHE_MATRIX_KEY = 'matrix';
@@ -26,11 +30,19 @@ export function getActivities(): Promise<Activity[]> {
                 mapHeaders: ({ header }) => camelCase(header)
             }))
             .on('data', (row) => {
-                // console.log(row);
-                results.push(row);
-                cache.set(CACHE_ACTIVITIES_KEY, results);
+
+                // change date format to something JS Date can parse
+                const { startDate, endDate, ...rest } = row
+                const formattedStartDate = dayjs(startDate, 'DD/MM/YYYY', true).format('YYYY-MM-DD');
+                const formattedEndDate = dayjs(endDate, 'DD/MM/YYYY', true).format('YYYY-MM-DD');
+                results.push({
+                    ...rest,
+                    startDate: formattedStartDate,
+                    endDate: formattedEndDate
+                });
             })
             .on('end', () => {
+                cache.set(CACHE_ACTIVITIES_KEY, results);
                 resolve(results);
             })
             .on('error', (error) => {
@@ -91,8 +103,8 @@ export function getAdjacencyMatrix(): Promise<Number[][]> {
                 results.push(Object.values(row).map(Number)); // convert strings to numbers
             })
             .on('end', () => {
-                resolve(results);
                 cache.set(CACHE_MATRIX_KEY, results);
+                resolve(results);
             })
             .on('error', (error) => {
                 reject(error);

@@ -36,7 +36,7 @@ import { mapObject } from "../hooks/general"
 /**
  * 
  * JUST FOR REFERENCE - GRAPH TRAVERSAL ALGORITHMS
- * THIS WAS ALL DONE IN THE CLIENT, BUT PROBABLY SHOULD BE IN THE SERVER
+ * THIS WAS ALL DONE IN THE CLIENT, BUT  SHOULD BE IN THE SERVER
  * ALSO AI HELPED A LOT BUT I AM KEEPING IT LOOKS NICE
  * 
  * BFS (Breadth‑First Search)
@@ -62,11 +62,14 @@ const getActivityLinks = async (): Promise<{ nodes: MappedNodes[], links: Link[]
 
     // convert nodes to something that can be used in the graph
     const mappedNodes = mapObject<Node, MappedNodes>(nodes, (key, value, index) => {
+
         return {
             id: key,
             name: `Node ${value.nodeId}`,
             nodeId: value.nodeId,
             value: value.nodeId,
+            startDate: value.startDate,
+            endDate: value.endDate,
         }
     })
 

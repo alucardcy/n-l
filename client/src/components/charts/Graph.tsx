@@ -3,6 +3,7 @@ import Chart from "./Chart";
 import type { Category, Link, MappedNodes } from "@nodes-links/types";
 import type { EChartsOption } from "echarts";
 import { Box } from "@mantine/core";
+import dayjs from "dayjs";
 
 type Props = {
     data: {
@@ -20,10 +21,17 @@ const Graph = ({ data }: Props) => {
             tooltip: {
                 formatter: (params: any) => {
                     if (params.dataType === 'node') {
+                        console.log(params.data);
+                        console.log(dayjs(params.data.startDate).isValid());
+
+
+
                         return `
                             <strong>${params.data.name}</strong><br/>
                             Connections: ${params.data.connections || 0}<br/>
                             Node ID: ${params.data.nodeId}
+                            Started at: ${new Date(params.data.startDate).toLocaleDateString()}
+                            Ended at: ${new Date(params.data.endDate).toLocaleDateString()}
                         `;
                     }
                     return ``;
