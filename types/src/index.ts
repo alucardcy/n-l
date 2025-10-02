@@ -30,6 +30,7 @@ export interface MappedNodes {
     connections?: number;
     category?: number;
     symbolSize?: number;
+    itemStyle?: { color: string }; // optional style for highlighting
 }
 
 export interface Category {

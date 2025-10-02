@@ -70,7 +70,6 @@ export function getActivitiesByRange(from: string, to: string): Promise<Activity
     });
 }
 
-// TODO cache it
 export function getActivityByIndex(nodeId: number): Promise<{ activity: Activity, index: number }> {
     return new Promise(async (resolve, reject) => {
         try {
@@ -153,7 +152,7 @@ export function parseLinks(activities: Activity[], matrix: Number[][]): { nodes:
 }
 
 
-// gets all nodes links for a given activity index
+// gets all nodes(activities) and links for a given activity id
 export function getActivityLinks(nodeId: number): Promise<{ nodes: MappedNodes[], links: Link[] }> {
     return new Promise(async (resolve, reject) => {
         try {
@@ -170,6 +169,7 @@ export function getActivityLinks(nodeId: number): Promise<{ nodes: MappedNodes[]
                 value: selectedActivity.nodeId,
                 startDate: selectedActivity.startDate,
                 endDate: selectedActivity.endDate,
+                itemStyle: { color: '#0cff7eff' } // highlight selected node
             });
 
 
@@ -188,6 +188,7 @@ export function getActivityLinks(nodeId: number): Promise<{ nodes: MappedNodes[]
                             value: activities[i].nodeId,
                             startDate: activities[i].startDate,
                             endDate: activities[i].endDate,
+                            itemStyle: { color: '#ffa500ff' } // highlight connected nodes
                         });
                         links.push({ source: activities[i].nodeId, target: activities[j].nodeId });
                     }
@@ -204,48 +205,3 @@ export function getActivityLinks(nodeId: number): Promise<{ nodes: MappedNodes[]
         }
     });
 }
-// export function getActivityLinks(activityIndex: number): Promise<Node> {
-//     return new Promise(async (resolve, reject) => {
-//         try {
-//             const activities = await getActivities();
-//             const activityByIndex = await getActivityByIndex(activityIndex);
-//             const matrix = await getAdjacencyMatrix();
-
-//             const links: Link[] = [];
-
-//             const node: Node = {
-//                 index: activityIndex,
-//                 startDate: activityByIndex?.startDate as Date,
-//                 endDate: activityByIndex?.endDate as Date,
-//                 nodeId: activityByIndex ? activityByIndex.nodeId : -1,
-//                 links: []
-//             };
-
-//             if (activityIndex < 0 || activityIndex >= activities.length) {
-//                 reject(new Error("Activity index out of bounds"));
-//                 return;
-//             }
-
-//             for (let i = 0; i < matrix.length; i++) {
-
-//                 if (activityIndex === i) {
-//                     for (let j = 0; j < matrix[i].length; j++) {
-//                         if (matrix[i][j] === 1) {
-//                             node.links.push(activities[j]);
-//                         }
-//                     }
-//                 } else {
-//                     if (matrix[i][activityIndex] === 1) {
-//                         node.links.push(activities[i]);
-//                     }
-//                 }
-
-
-//             }
-//             resolve(node)
-
-//         } catch (error) {
-//             reject(error);
-//         }
-//     });
-// }

@@ -27,6 +27,9 @@ export interface MappedNodes {
     connections?: number;
     category?: number;
     symbolSize?: number;
+    itemStyle?: {
+        color: string;
+    };
 }
 export interface Category {
     id: number;

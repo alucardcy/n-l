@@ -2,7 +2,6 @@ import { useMemo, useRef } from "react";
 import Chart from "./Chart"
 import { Box } from "@mantine/core";
 import type { Activity } from "@nodes-links/types";
-import type { EChartsOption } from "echarts";
 
 type Props = {
     data: {

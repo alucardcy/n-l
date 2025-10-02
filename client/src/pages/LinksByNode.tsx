@@ -10,7 +10,9 @@ const Links = () => {
 
     return (
         <div>
-            <h1>Links for Node ID: {params.nodeId}</h1>
+            <Center>
+                <h1>Links for Node ID: {params.nodeId}</h1>
+            </Center>
 
             <Divider my="md" />
             {isLoading && <Center><Loader /></Center>}

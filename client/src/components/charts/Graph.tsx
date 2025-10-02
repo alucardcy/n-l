@@ -27,7 +27,7 @@ const Graph = ({ data }: Props) => {
                     if (params.dataType === 'node') {
                         return `
                             <strong>${params.data.name}</strong><br/>
-                            Connections: ${params.data.connections || 0}<br/>
+                            Connections: ${params.data.connections || "N/A"}<br/>
                             Node ID: ${params.data.nodeId}
                             Started at: ${new Date(params.data.startDate).toLocaleDateString()}
                             Ended at: ${new Date(params.data.endDate).toLocaleDateString()}
@@ -63,7 +63,7 @@ const Graph = ({ data }: Props) => {
         }
     }, [data]);
     return (
-        <Box h={{ base: "100dvh", sm: "100dvh", md: 600 }}>
+        <Box h={{ base: "100dvh", sm: "100dvh", md: 600 }} style={{ border: "1px solid lightgray", borderRadius: 8, padding: 8 }}>
             <Chart ref={chartRef} option={option} style={{ height: "100%" }} />
         </Box>
     )
