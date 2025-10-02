@@ -2,15 +2,17 @@ import fs from "fs";
 import csv from "csv-parser";
 import camelCase from "lodash.camelcase";
 import cache from "./cache";
+import { Node, Activity, Nodes, Link, MappedNodes } from "@nodes-links/types";
+import dayjs from "dayjs";
+import CustomParseFormat from 'dayjs/plugin/customParseFormat'
 
-type Activity = {
-    nodeId: number;
-    StartDate: Date
-    EndDate: Date
-}
+dayjs.extend(CustomParseFormat);
+
+//  assuming this would have been db calls in a real app
 
 const CACHE_ACTIVITIES_KEY = 'activities';
 const CACHE_MATRIX_KEY = 'matrix';
+const CACHE_LINKS_KEY = 'links';
 
 export function getActivities(): Promise<Activity[]> {
     return new Promise((resolve, reject) => {
@@ -28,11 +30,19 @@ export function getActivities(): Promise<Activity[]> {
                 mapHeaders: ({ header }) => camelCase(header)
             }))
             .on('data', (row) => {
-                // console.log(row);
-                results.push(row);
-                cache.set(CACHE_ACTIVITIES_KEY, results);
+
+                // change date format to something JS Date can parse
+                const { startDate, endDate, ...rest } = row
+                const formattedStartDate = dayjs(startDate, 'DD/MM/YYYY', true).format('YYYY-MM-DD');
+                const formattedEndDate = dayjs(endDate, 'DD/MM/YYYY', true).format('YYYY-MM-DD');
+                results.push({
+                    ...rest,
+                    startDate: formattedStartDate,
+                    endDate: formattedEndDate
+                });
             })
             .on('end', () => {
+                cache.set(CACHE_ACTIVITIES_KEY, results);
                 resolve(results);
             })
             .on('error', (error) => {
@@ -41,16 +51,40 @@ export function getActivities(): Promise<Activity[]> {
     });
 }
 
-// TODO cache it
-export function getActivityByIndex(index: number): Promise<Activity | null> {
+
+// assume it would be a sql query with date range filtering
+export function getActivitiesByRange(from: string, to: string): Promise<Activity[]> {
     return new Promise(async (resolve, reject) => {
         try {
             const activities = await getActivities();
-            if (index < 0 || index >= activities.length) {
-                resolve(null);
+            // filter by date range
+            const filtered = activities.filter(activity => {
+                const activityStart = new Date(activity.startDate);
+                const activityEnd = new Date(activity.endDate);
+                return activityStart >= new Date(from) && activityEnd <= new Date(to);
+            });
+            resolve(filtered);
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+export function getActivityByIndex(nodeId: number): Promise<{ activity: Activity, index: number }> {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const activities = await getActivities();
+
+            const index = activities.findIndex(act => {
+                return +act.nodeId === nodeId;
+            });
+
+            if (index === -1) {
+                reject(new Error("Activity not found"));
                 return;
             }
-            resolve(activities[index]);
+
+            resolve({ activity: activities[index], index });
         } catch (error) {
             reject(error);
         }
@@ -74,58 +108,70 @@ export function getAdjacencyMatrix(): Promise<Number[][]> {
                 results.push(Object.values(row).map(Number)); // convert strings to numbers
             })
             .on('end', () => {
-                resolve(results);
                 cache.set(CACHE_MATRIX_KEY, results);
+                resolve(results);
             })
             .on('error', (error) => {
                 reject(error);
             });
     });
 }
+// creates parent nodes and their links, and an array of all links with source and target
+export function parseLinks(activities: Activity[], matrix: Number[][]): { nodes: Nodes, links: Link[] } {
 
-type Nodes = {
-    [key: number]: Node;
-}
-
-type Node = {
-    index: number;
-    nodeId: number;
-    links: Activity[];
-}
-
-export function parseLinks(activities: Activity[], matrix: Number[][]): Nodes {
-
+    const cached = cache.get<{ nodes: Nodes, links: Link[] }>(CACHE_LINKS_KEY);
+    if (cached) {
+        console.log('Returning cached links');
+        return cached;
+    }
     const nodes: Nodes = {}
+    const links: Link[] = [];
 
     for (let i = 0; i < matrix.length; i++) {
+        nodes[activities[i].nodeId] = {
+            index: i,
+            nodeId: activities[i].nodeId,
+            startDate: activities[i].startDate,
+            endDate: activities[i].endDate,
+            links: []
+        };
         for (let j = 0; j < matrix[i].length; j++) {
-            if (matrix[i][j] === 1) {
-                nodes[activities[i].nodeId] = {
-                    index: i,
-                    nodeId: activities[i].nodeId,
-                    links: nodes[activities[i].nodeId]?.links ? [...nodes[activities[i].nodeId].links, activities[j]] : [activities[j]]
-                };
+            if (+matrix[i][j] > 0) {
+                //welp I grouped them by nodeId but I guess it wasn't necessary
+                nodes[activities[i].nodeId].links.push(activities[j]);
+                links.push({
+                    source: activities[i].nodeId,
+                    target: activities[j].nodeId
+                });
             }
         }
     }
-    return nodes;
+    cache.set(CACHE_LINKS_KEY, { nodes, links });
+    return { nodes, links };
 
 }
 
 
-// gets all links for a given activity index
-export function getActivityLinks(activityIndex: number): Promise<Node> {
+// gets all nodes(activities) and links for a given activity id
+export function getActivityLinks(nodeId: number): Promise<{ nodes: MappedNodes[], links: Link[] }> {
     return new Promise(async (resolve, reject) => {
         try {
             const activities = await getActivities();
-            const activityByIndex = await getActivityByIndex(activityIndex);
+            const { activity: selectedActivity, index: activityIndex } = await getActivityByIndex(nodeId);
             const matrix = await getAdjacencyMatrix();
 
-            const node: Node = {
-                index: activityIndex,
-                nodeId: activityByIndex ? activityByIndex.nodeId : -1,
-                links: []
-            };
+            const links: Link[] = [];
+            const nodes: MappedNodes[] = []
+            nodes.push({
+                id: selectedActivity.nodeId,
+                name: `Node ${selectedActivity.nodeId}`,
+                nodeId: selectedActivity.nodeId,
+                value: selectedActivity.nodeId,
+                startDate: selectedActivity.startDate,
+                endDate: selectedActivity.endDate,
+                itemStyle: { color: '#0cff7eff' } // highlight selected node
+            });
+
 
             if (activityIndex < 0 || activityIndex >= activities.length) {
                 reject(new Error("Activity index out of bounds"));
@@ -133,22 +179,26 @@ export function getActivityLinks(activityIndex: number): Promise<Node> {
             }
 
             for (let i = 0; i < matrix.length; i++) {
+                for (let j = 0; j < matrix[i].length; j++) {
+                    if (activityIndex === j && +matrix[i][j] > 0) {
+                        nodes.push({
+                            id: activities[i].nodeId,
+                            name: `Node ${activities[i].nodeId}`,
+                            nodeId: activities[i].nodeId,
+                            value: activities[i].nodeId,
+                            startDate: activities[i].startDate,
+                            endDate: activities[i].endDate,
+                            itemStyle: { color: '#ffa500ff' } // highlight connected nodes
+                        });
+                        links.push({ source: activities[i].nodeId, target: activities[j].nodeId });
+                    }
 
-                if (activityIndex === i) {
-                    for (let j = 0; j < matrix[i].length; j++) {
-                        if (matrix[i][j] === 1) {
-                            node.links.push(activities[j]);
-                        }
-                    }
-                } else {
-                    if (matrix[i][activityIndex] === 1) {
-                        node.links.push(activities[i]);
-                    }
                 }
-
-
             }
-            resolve(node)
+
+            resolve({ nodes, links });
+
+
 
         } catch (error) {
             reject(error);
