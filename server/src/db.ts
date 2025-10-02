@@ -180,6 +180,7 @@ export function getActivityLinks(nodeId: number): Promise<{ nodes: MappedNodes[]
 
             for (let i = 0; i < matrix.length; i++) {
                 for (let j = 0; j < matrix[i].length; j++) {
+                    // here we only get nodes that our selected node connects to as source
                     if (activityIndex === j && +matrix[i][j] > 0) {
                         nodes.push({
                             id: activities[i].nodeId,

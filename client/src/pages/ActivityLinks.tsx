@@ -10,7 +10,7 @@ const ActivityLinks = () => {
             <Stack>
                 <Text size="lg" fw={600}>Graph Chart showing Nodes(Activities) and their Links</Text>
 
-                <Text c="dimmed">Click on a node to view gantt chart</Text>
+                <Text fs={"italic"}>Click on a node to view gantt chart</Text>
 
             </Stack>
             <Divider my="md" />
