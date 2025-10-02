@@ -1,7 +1,7 @@
-import { Center, Divider, Flex, Group, Loader, NumberInput } from "@mantine/core";
+import { Center, Divider, Flex, Group, Loader, NumberInput, Text } from "@mantine/core";
 import { useGetActivities } from "../api/activities";
 import { DatePickerInput } from "@mantine/dates";
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Pie from "../components/charts/Pie";
 import { useDebounce } from "../hooks/general";
 import dayjs from "dayjs";
@@ -30,9 +30,9 @@ const Activities = () => {
             <Flex direction="column" gap="md" align="center">
                 <h1>Activities</h1>
                 <div>
-                    <p>Pie chart displaying how many days each activity took to complete</p>
-                    <p>Can be filtered by date range and days</p>
-                    <p>Click on an activity to view any connections with other activities </p>
+                    <Text>Pie chart displaying how many days each activity took to complete</Text>
+                    <Text>Can be filtered by date range and days</Text>
+                    <Text fw="bold" fs="italic" >Click on an activity to view any connections with other activities </Text>
                 </div>
                 <h3>Choose a date range to display pie </h3>
                 <Group>

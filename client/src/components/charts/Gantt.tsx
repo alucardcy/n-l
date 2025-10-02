@@ -11,7 +11,16 @@ const Gantt = ({ data }: Props) => {
 
     const option = useMemo<echarts.EChartsOption | {}>(() => {
         if (!data) return {};
-        console.log(data);
+
+        const minMaxDate = data.reduce((acc, node) => {
+            const start = new Date(node.startDate).getTime();
+            const end = new Date(node.endDate).getTime();
+
+            if (start < acc.min) acc.min = start;
+            if (end > acc.max) acc.max = end;
+            return acc;
+        }, { min: Infinity, max: -Infinity });
+
 
 
         return {
@@ -20,19 +29,20 @@ const Gantt = ({ data }: Props) => {
                     const node = data[params.value[0]];
                     const start = new Date(params.value[1]);
                     const end = new Date(params.value[2]);
-                    return `${node.id}<br>${start.toLocaleDateString()} - ${end.toLocaleDateString()}`;
+                    return `Node Id: ${node.id}<br>${start.toLocaleDateString()} - ${end.toLocaleDateString()}`;
                 }
             },
             grid: { left: 100 },
             xAxis: {
                 type: 'time',
-                // TODO dynamically set min max
-                min: new Date('2012-01-30'),
-                max: new Date('2025-10-11'),
+                name: "Date",
+                min: new Date(minMaxDate.min),
+                max: new Date(minMaxDate.max),
                 axisLabel: { formatter: (val: Date) => new Date(val).toLocaleDateString() }
             },
             yAxis: {
                 type: 'category',
+                name: "Node ID",
                 data: data.map(n => n.id),
                 inverse: true,
                 axisLabel: { inside: false }
@@ -50,13 +60,27 @@ const Gantt = ({ data }: Props) => {
                         shape: {
                             x: start[0],
                             y: start[1] - height / 2,
-                            width: end[0] - start[0],
-                            height: height
+                            width: end[0] - start[0] || 1,// at least 1px width when its a single day
+                            height: height,
                         },
-                        style: api.style()
+
+                        style: {
+                            fill: {
+                                type: 'linear',
+                                colorStops: [
+                                    { offset: 0, color: '#003ef8ff' },
+                                    { offset: 1, color: '#00f4b4ff' }
+                                ]
+                            },
+                            stroke: '#003ef8',
+                            lineWidth: 1,
+                            shadowBlur: 4,
+                            shadowColor: 'rgba(0,0,0,0.2)',
+                            borderRadius: 4
+                        },
                     };
                 },
-                itemStyle: { color: '#5470C6' },
+                itemStyle: { color: '#003ef8ff' },
                 encode: { x: [1, 2], y: 0 },
                 data: data.map((node, i) => [i, node.startDate, node.endDate]),
             }],
