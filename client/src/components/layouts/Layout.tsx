@@ -1,4 +1,4 @@
-import { AppShell, Burger, Flex, NavLink, Stack } from "@mantine/core"
+import { AppShell, Burger, Button, Flex, NavLink, Stack } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
 import { Link, Outlet } from "react-router"
 
@@ -21,7 +21,7 @@ const Layout = () => {
             }}>
                 <Flex align={"center"} gap={"md"}>
                     <Burger opened={opened} onClick={toggle} size="sm" />
-                    Hi Links of Nodes
+                    <Button variant="outline" component={Link} to={"/"}>Hi Links of Nodes</Button>
                 </Flex>
             </AppShell.Header>
             <AppShell.Navbar>
