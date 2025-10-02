@@ -4,6 +4,7 @@ import type { Category, Link, MappedNodes } from "@nodes-links/types";
 import type { EChartsOption } from "echarts";
 import { Box } from "@mantine/core";
 import { useNavigate } from "react-router";
+import dayjs from "dayjs";
 
 type Props = {
     data: {
@@ -13,7 +14,7 @@ type Props = {
     }
 }
 const Graph = ({ data }: Props) => {
-    const chartRef = useRef<any>(null);
+    const chartRef = useRef<echarts.ECharts | null>(null);
     const navigate = useNavigate()
 
     const option = useMemo<EChartsOption | {}>(() => {
@@ -27,12 +28,15 @@ const Graph = ({ data }: Props) => {
             tooltip: {
                 formatter: (params: any) => {
                     if (params.dataType === 'node') {
+                        const startDate = dayjs(params.data.startDate);
+                        const endDate = dayjs(params.data.endDate);
+
                         return `
                             <strong>${params.data.name}</strong><br/>
                             Connections: ${params.data.connections || "N/A"}<br/>
-                            Node ID: ${params.data.nodeId}
-                            Started at: ${new Date(params.data.startDate).toLocaleDateString()}
-                            Ended at: ${new Date(params.data.endDate).toLocaleDateString()}
+                            Node ID: ${params.data.nodeId}<br/>
+                            Started at: ${startDate.isValid() ? startDate.format('MMM D, YYYY') : 'N/A'}<br/>
+                            Ended at: ${endDate.isValid() ? endDate.format('MMM D, YYYY') : 'N/A'}
                         `;
                     }
                     return ``;
@@ -67,14 +71,19 @@ const Graph = ({ data }: Props) => {
 
 
     useEffect(() => {
-        chartRef?.current.on("click", (params: echarts.ECElementEvent) => {
+        if (!chartRef?.current) return undefined;
+        const handleClick = (params: echarts.ECElementEvent) => {
 
             if (params.componentType === "series" && params.seriesType === "graph" && params.data) {
-                console.log(params.data);
                 navigate(`/activity/${(params.data as MappedNodes).nodeId}`)
             }
-        })
-    }, [chartRef]);
+        }
+        chartRef.current.on("click", handleClick);
+
+        return () => {
+            chartRef.current?.off("click", handleClick);
+        };
+    }, [chartRef.current]);
 
 
     return (
