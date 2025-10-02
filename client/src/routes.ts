@@ -1,5 +1,6 @@
 import Layout from "./components/layouts/Layout";
 import Index from "./pages";
+import ActiveNodes from "./pages/ActiveNodes";
 import Activities from "./pages/Activities";
 import ActivityLinks from "./pages/ActivityLinks";
 import LinksByNode from "./pages/LinksByNode";
@@ -22,8 +23,12 @@ export default [
                 Component: ActivityLinks
             },
             {
-                "path": "links/:nodeId",
+                path: "links/:nodeId",
                 Component: LinksByNode
+            },
+            {
+                path: "timeline",
+                Component: ActiveNodes
             }
         ]
     }

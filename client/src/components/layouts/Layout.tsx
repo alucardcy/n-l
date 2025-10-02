@@ -29,6 +29,7 @@ const Layout = () => {
                     <NavLink onClick={() => toggle()} to={"/"} label="Home" component={Link} />
                     <NavLink onClick={() => toggle()} to={"/activities"} label="Activities" component={Link} />
                     <NavLink onClick={() => toggle()} to={"/links"} label="Links" component={Link} />
+                    <NavLink onClick={() => toggle()} to={"/timeline"} label="Timeline" component={Link} />
                 </Stack>
             </AppShell.Navbar>
             <AppShell.Main>

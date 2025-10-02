@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import { getActivities, getActivitiesByRange, getActivityLinks, getAdjacencyMatrix, parseLinks } from "./db";
 import dayjs from "dayjs";
+import { getDatesBetween } from "./utils";
 
 
 const app = express();
@@ -81,6 +82,29 @@ app.get("/activity/:id/links", async (req, res) => {
     }
 
 });
+
+
+app.get("/getActiveNodes", async (req, res) => {
+    try {
+        const { from, to } = req.query;
+        if (!dayjs(from as string).isValid() && !dayjs(to as string).isValid()) {
+            res.status(400).send("Invalid date format");
+            return
+        }
+
+        const dates = getDatesBetween(from as string, to as string);
+        const activities = await getActivitiesByRange(from as string, to as string);
+
+        const activityCounts = dates.map(date =>
+            activities.filter(activity =>
+                new Date(date) >= new Date(activity.startDate) && new Date(date) <= new Date(activity.endDate)).length);
+
+        res.status(200).json({ dates, activities: activityCounts });
+
+    } catch (error) {
+        res.status(500).send("Error processing active nodes");
+    }
+})
 
 
 app.listen(port, () => {

@@ -3,8 +3,7 @@ import { useGetLinksByNode } from "../api/activityLinks"
 import { Center, Divider, Loader } from "@mantine/core"
 import Graph from "../components/charts/Graph"
 
-type Props = {}
-const Links = (props: Props) => {
+const Links = () => {
     const params = useParams<{ nodeId: string }>()
     const { data, isLoading, isSuccess, isError, error } = useGetLinksByNode(params.nodeId!)
 

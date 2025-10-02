@@ -137,7 +137,7 @@ export function parseLinks(activities: Activity[], matrix: Number[][]): { nodes:
             links: []
         };
         for (let j = 0; j < matrix[i].length; j++) {
-            if (matrix[i][j] === 1) {
+            if (+matrix[i][j] > 0) {
                 //welp I grouped them by nodeId but I guess it wasn't necessary
                 nodes[activities[i].nodeId].links.push(activities[j]);
                 links.push({
@@ -180,7 +180,7 @@ export function getActivityLinks(nodeId: number): Promise<{ nodes: MappedNodes[]
 
             for (let i = 0; i < matrix.length; i++) {
                 for (let j = 0; j < matrix[i].length; j++) {
-                    if (activityIndex === j && matrix[i][j] === 1) {
+                    if (activityIndex === j && +matrix[i][j] > 0) {
                         nodes.push({
                             id: activities[i].nodeId,
                             name: `Node ${activities[i].nodeId}`,

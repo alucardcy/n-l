@@ -7,32 +7,7 @@ import type { AxiosError } from "axios"
 
 
 
-// data transformation here, applied caching through react-query
-// const getActivityLinks = async (): Promise<{ nodes: MappedNodes[], links: Link[] }> => {
-//     const { data } = await axiosInstance.get<{ nodes: Nodes, links: Link[] }>("/links")
-//     const { nodes, links } = data;
 
-
-//     // convert nodes to something that can be used in the graph
-//     const mappedNodes = mapObject<Node, MappedNodes>(nodes, (key, value, index) => {
-//         return {
-//             id: key,
-//             name: `Node ${value.nodeId}`,
-//             nodeId: value.nodeId,
-//             value: value.nodeId,
-//         }
-//     })
-
-//     // calculate connections for each node to determine size
-//     mappedNodes.forEach((node: any) => {
-
-//         node.connections = links.filter((l) => l.source === node.nodeId || l.target === node.nodeId).length;
-
-//         node.symbolSize = 10 + node.connections * 2;
-//     })
-
-//     return { nodes: mappedNodes, links, };
-// }
 
 /**
  * 
