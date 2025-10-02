@@ -18,15 +18,18 @@ app.get("/", (req, res) => {
 
 app.get("/activities", async (req, res) => {
     try {
-        const { from, to } = req.query;
+        const from = typeof req.query.from === 'string' ? req.query.from : undefined;
+        const to = typeof req.query.to === 'string' ? req.query.to : undefined;
+
         if (from && to) {
-            if (dayjs(from as string).isValid() && dayjs(to as string).isValid()) {
+            if (dayjs(from).isValid() && dayjs(to).isValid()) {
                 console.log('Fetching activities with date range');
-                const activities = await getActivitiesByRange(from as string, to as string);
+                const activities = await getActivitiesByRange(from, to);
                 res.status(200).json(activities);
                 return;
             } else {
-                res.status(400).send("Invalid date format.");
+                res.status(400).send({ error: "Invalid date format" });
+                return;
             }
         }
 
@@ -34,7 +37,7 @@ app.get("/activities", async (req, res) => {
         const activities = await getActivities();
         res.status(200).json(activities);
     } catch (error) {
-        res.status(500).send("Error reading activities");
+        res.status(500).send({ error: "Error reading activities" });
     }
 
 })
@@ -45,7 +48,7 @@ app.get("/matrix", async (req, res) => {
         const matrix = await getAdjacencyMatrix();
         res.json(matrix);
     } catch (error) {
-        res.status(500).send("Error reading adjacency matrix");
+        res.status(500).send({ error: "Error reading adjacency matrix" });
     }
 })
 
@@ -60,7 +63,7 @@ app.get("/links", async (req, res) => {
     } catch (error) {
         console.log(error);
 
-        res.status(500).send("Error processing links");
+        res.status(500).send({ error: "Error processing links" });
     }
 });
 
@@ -69,7 +72,7 @@ app.get("/activity/:id/links", async (req, res) => {
     const nodeId = parseInt(req.params.id);
 
     if (isNaN(nodeId)) {
-        res.status(400).send("Invalid activity index");
+        res.status(400).send({ error: "Invalid activity index" });
         return;
     }
 
@@ -78,7 +81,7 @@ app.get("/activity/:id/links", async (req, res) => {
         res.status(200).json(result);
     } catch (error) {
         console.log(error);
-        res.status(500).send("Error processing activity links");
+        res.status(500).send({ error: "Error processing activity links" });
     }
 
 });
@@ -87,9 +90,11 @@ app.get("/activity/:id/links", async (req, res) => {
 // returns dates range and array of active nodes count for each date
 app.get("/getActiveNodes", async (req, res) => {
     try {
-        const { from, to } = req.query;
-        if (!dayjs(from as string).isValid() && !dayjs(to as string).isValid()) {
-            res.status(400).send("Invalid date format");
+        const from = typeof req.query.from === 'string' ? req.query.from : undefined;
+        const to = typeof req.query.to === 'string' ? req.query.to : undefined;
+
+        if (!from || !to || !dayjs(from).isValid() || !dayjs(to).isValid()) {
+            res.status(400).send({ error: "Invalid date format" });
             return
         }
 
@@ -103,7 +108,7 @@ app.get("/getActiveNodes", async (req, res) => {
         res.status(200).json({ dates, activities: activityCounts });
 
     } catch (error) {
-        res.status(500).send("Error processing active nodes");
+        res.status(500).send({ error: "Error processing active nodes" });
     }
 })
 

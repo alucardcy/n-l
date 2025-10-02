@@ -13,6 +13,7 @@
     "build": "yarn workspace @nodes-links/types build && yarn workspace client build"
   },
   "devDependencies": {
-    "concurrently": "^7.6.0"
+    "concurrently": "^7.6.0",
+    "typescript": "^5.9.3"
   }
 }

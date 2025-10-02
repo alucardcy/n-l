@@ -1,7 +1,7 @@
 export type Activity = {
     nodeId: number;
-    startDate: Date;
-    endDate: Date;
+    startDate: string;
+    endDate: string;
 };
 export type Nodes = {
     [key: number]: Node;
@@ -9,8 +9,8 @@ export type Nodes = {
 export type Node = {
     index: number;
     nodeId: number;
-    startDate: Date;
-    endDate: Date;
+    startDate: string;
+    endDate: string;
     links: Activity[];
 };
 export type Link = {
@@ -22,8 +22,8 @@ export interface MappedNodes {
     name: string;
     nodeId: number;
     value: number;
-    startDate: Date;
-    endDate: Date;
+    startDate: string;
+    endDate: string;
     connections?: number;
     category?: number;
     symbolSize?: number;

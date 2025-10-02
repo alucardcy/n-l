@@ -25,7 +25,6 @@
     "@types/node": "^24.6.0",
     "@types/node-cache": "^4.2.5",
     "nodemon": "^3.1.10",
-    "tsx": "^4.20.6",
-    "typescript": "^5.9.2"
+    "tsx": "^4.20.6"
   }
 }
