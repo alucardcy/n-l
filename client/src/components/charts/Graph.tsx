@@ -8,7 +8,7 @@ type Props = {
     data: {
         nodes: MappedNodes[],
         links: Link[]
-        categories: Category[]
+        categories?: Category[]
     }
 }
 const Graph = ({ data }: Props) => {
@@ -17,6 +17,11 @@ const Graph = ({ data }: Props) => {
     const option = useMemo<EChartsOption | {}>(() => {
         if (!data) return {};
         return {
+            // Turn off global animation to avoid nodes animating on each update
+            animation: false,
+            // Make sure update durations are zero so layout jumps to final state
+            animationDuration: 0,
+            animationDurationUpdate: 0,
             tooltip: {
                 formatter: (params: any) => {
                     if (params.dataType === 'node') {
@@ -34,14 +39,22 @@ const Graph = ({ data }: Props) => {
             series: [{
                 type: 'graph',
                 layout: 'force',
+                // Start with a circular initial layout so nodes don't fly in from random positions
+                initLayout: 'circular',
                 data: data.nodes,
                 links: data.links,
                 categories: data.categories,
                 roam: true,
                 label: { show: true },
                 emphasis: { focus: 'adjacency' },
+                // Disable per-series animation as well
+                animation: false,
+                animationDuration: 0,
+                animationDurationUpdate: 0,
                 force: {
                     repulsion: 100,
+                    // Prevent the force layout from animating after the initial layout pass
+                    layoutAnimation: false,
                     // edgeLength: [50, 200],
                 },
 

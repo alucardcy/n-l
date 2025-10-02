@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query"
 import axiosInstance from "./axiosInstance"
 import type { Link, Nodes, Node, MappedNodes, Category } from "@nodes-links/types"
 import { mapObject } from "../hooks/general"
+import type { AxiosError } from "axios"
 
 
 
@@ -144,3 +145,20 @@ export const useGetActivityLinks = () => {
     })
 }
 
+
+const getLinksByNode = async (nodeId: string): Promise<{ nodes: MappedNodes[], links: Link[] }> => {
+    const { data } = await axiosInstance.get<{ nodes: MappedNodes[], links: Link[] }>(`/activity/${nodeId}/links`)
+    return data
+}
+
+export const useGetLinksByNode = (nodeId: string) => {
+    return useQuery<{ nodes: MappedNodes[], links: Link[] }, AxiosError>({
+        queryKey: ['links', nodeId],
+        queryFn: () => getLinksByNode(nodeId),
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
+        staleTime: 1000 * 60 * 5, // 5 minutes,
+        retry: false,
+        // enabled: !!nodeId, // only run if nodeId is valid
+    })
+}

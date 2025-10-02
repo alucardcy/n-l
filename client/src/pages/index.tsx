@@ -1,7 +1,7 @@
 const Index = () => {
     return (
         <div>
-            hi
+            Just the landing page
         </div>
     )
 }

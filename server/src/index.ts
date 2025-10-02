@@ -64,16 +64,17 @@ app.get("/links", async (req, res) => {
 });
 
 
-app.get("/activity/:index/links", async (req, res) => {
-    const index = parseInt(req.params.index);
-    if (isNaN(index)) {
+app.get("/activity/:id/links", async (req, res) => {
+    const nodeId = parseInt(req.params.id);
+
+    if (isNaN(nodeId)) {
         res.status(400).send("Invalid activity index");
         return;
     }
 
     try {
-        const links = await getActivityLinks(index);
-        res.json(links);
+        const result = await getActivityLinks(nodeId);
+        res.status(200).json(result);
     } catch (error) {
         console.log(error);
         res.status(500).send("Error processing activity links");

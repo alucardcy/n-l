@@ -21,10 +21,12 @@ export type Link = {
 
 
 export interface MappedNodes {
-    id: string;
+    id: string | number;
     name: string;
     nodeId: number;
     value: number;
+    startDate: Date;
+    endDate: Date;
     connections?: number;
     category?: number;
     symbolSize?: number;

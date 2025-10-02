@@ -5,18 +5,29 @@ import dayjs from "dayjs";
 import { useEffect, useMemo, useRef } from "react";
 import * as echarts from "echarts";
 import Chart from "./Chart";
+import { useNavigate } from "react-router";
 
 type Props = {
     data: Activity[]
     duration: number
 }
+
+interface PieData {
+    name: string;
+    value: number;
+    nodeId: number;
+    duration: number;
+    startDate: Date;
+    endDate: Date;
+}
 const Pie = ({ data, duration }: Props) => {
 
     const chartRef = useRef<any>(null);
     const isMobile = useMediaQuery(`(max-width: ${em(750)})`);
+    const navigate = useNavigate()
 
 
-    const pieData = useMemo(() => {
+    const pieData = useMemo<PieData[]>(() => {
         if (!data) return [];
 
 
@@ -30,7 +41,9 @@ const Pie = ({ data, duration }: Props) => {
                 name: `Node ${activity.nodeId}`,
                 value: durationDays,
                 nodeId: activity.nodeId,
-                duration: durationDays
+                duration: durationDays,
+                startDate: activity.startDate,
+                endDate: activity.endDate
             };
         });
 
@@ -91,8 +104,9 @@ const Pie = ({ data, duration }: Props) => {
 
 
         chartRef?.current.on("click", (params: echarts.ECElementEvent) => {
-            if (params.componentType === "series" && params.seriesType === "pie") {
-                console.log(params.data);
+            if (params.componentType === "series" && params.seriesType === "pie" && params.data) {
+                // console.log(params.data);
+                navigate(`/links/${(params?.data as PieData).nodeId}`)
 
             }
         })

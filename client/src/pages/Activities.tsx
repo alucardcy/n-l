@@ -1,17 +1,24 @@
-import { Center, Divider, em, Flex, Group, Loader, NumberInput } from "@mantine/core";
+import { Center, Divider, Flex, Group, Loader, NumberInput } from "@mantine/core";
 import { useGetActivities } from "../api/activities";
 import { DatePickerInput } from "@mantine/dates";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Pie from "../components/charts/Pie";
 import { useDebounce } from "../hooks/general";
+import dayjs from "dayjs";
 
 
 
 const Activities = () => {
     const [dateRange, setDateRange] = useState<[string | null, string | null]>([null, null]);
-    const [duration, setDuration] = useState<number>(0);
+    const [duration, setDuration] = useState<number>(100);
+    const dateRangeParams = useMemo(() => {
+        if (dayjs(dateRange[0] as string).isValid() && dayjs(dateRange[1] as string).isValid()) {
+            return { from: dateRange[0], to: dateRange[1] }
+        }
+        return {};
+    }, [dateRange]);
 
-    const { data, isLoading, isSuccess } = useGetActivities({ from: dateRange[0], to: dateRange[1] });
+    const { data, isLoading, isSuccess } = useGetActivities(dateRangeParams);
     const debouncedDuration = useDebounce(duration, 500);
 
 
@@ -22,6 +29,11 @@ const Activities = () => {
         <div>
             <Flex direction="column" gap="md" align="center">
                 <h1>Activities</h1>
+                <div>
+                    <p>Pie chart displaying how many days each activity took to complete</p>
+                    <p>Can be filtered by date range and days</p>
+                    <p>Click on an activity to view any connections with other activities </p>
+                </div>
                 <h3>Choose a date range to display pie </h3>
                 <Group>
 
@@ -34,7 +46,7 @@ const Activities = () => {
                         onChange={setDateRange}
                     />
 
-                    <NumberInput label="Enter duration in days" value={duration} onChange={(value) => setDuration(value as number)} />
+                    <NumberInput min={0} label="Enter duration in days" value={duration} onChange={(value) => setDuration(value as number)} />
                 </Group>
             </Flex>
 

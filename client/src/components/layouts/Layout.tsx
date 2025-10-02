@@ -26,9 +26,9 @@ const Layout = () => {
             </AppShell.Header>
             <AppShell.Navbar>
                 <Stack justify="center" align="center" gap={0}>
-                    <NavLink to={"/"} label="Home" component={Link} />
-                    <NavLink to={"/activities"} label="Activities" component={Link} />
-                    <NavLink to={"/links"} label="Links" component={Link} />
+                    <NavLink onClick={() => toggle()} to={"/"} label="Home" component={Link} />
+                    <NavLink onClick={() => toggle()} to={"/activities"} label="Activities" component={Link} />
+                    <NavLink onClick={() => toggle()} to={"/links"} label="Links" component={Link} />
                 </Stack>
             </AppShell.Navbar>
             <AppShell.Main>
