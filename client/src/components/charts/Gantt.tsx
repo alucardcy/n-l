@@ -80,7 +80,6 @@ const Gantt = ({ data }: Props) => {
                         },
                     };
                 },
-                itemStyle: { color: '#003ef8ff' },
                 encode: { x: [1, 2], y: 0 },
                 data: data.map((node, i) => [i, node.startDate, node.endDate]),
             }],

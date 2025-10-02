@@ -17,23 +17,23 @@ export default [
             },
             {
                 path: "activities",
-                Component: Activities
+                Component: Activities // Nodes Pie chart
             },
             {
                 path: "activity/:nodeId",
-                Component: ActivityGantt
+                Component: ActivityGantt // Gantt chart for a specific node
             },
             {
                 path: "links",
-                Component: ActivityLinks
+                Component: ActivityLinks // Graph chart showing nodes and their links
             },
             {
                 path: "links/:nodeId",
-                Component: LinksByNode
+                Component: LinksByNode // Links for a specific node
             },
             {
                 path: "timeline",
-                Component: ActiveNodes
+                Component: ActiveNodes // Timeline Line chart
             }
         ]
     }
