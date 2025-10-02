@@ -1,4 +1,4 @@
-import { Center, Divider, Loader } from "@mantine/core";
+import { Center, Divider, Loader, Stack, Text } from "@mantine/core";
 import { useGetActivityLinks } from "../api/activityLinks";
 import Graph from "../components/charts/Graph";
 
@@ -7,7 +7,12 @@ const ActivityLinks = () => {
 
     return (
         <div>
-            <h1>Graph Chart showing Nodes(Activities) and their Links</h1>
+            <Stack>
+                <Text size="lg" fw={600}>Graph Chart showing Nodes(Activities) and their Links</Text>
+
+                <Text fs={"italic"}>Click on a node to view gantt chart</Text>
+
+            </Stack>
             <Divider my="md" />
             {isLoading && <Center><Loader /></Center>}
             {isSuccess && data && (

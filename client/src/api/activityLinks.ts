@@ -12,7 +12,9 @@ import type { AxiosError } from "axios"
  * 
  * JUST FOR REFERENCE - GRAPH TRAVERSAL ALGORITHMS
  * THIS WAS ALL DONE IN THE CLIENT, BUT  SHOULD BE IN THE SERVER
- * ALSO AI HELPED A LOT BUT I AM KEEPING IT LOOKS NICE
+ * ALSO AI HELPED A LOT BUT I AM KEEPING FOR CONVERSATION
+ * PROMPT USE WAS SOMETHING ALONG THE LINES OF:
+ * I want to create a pool to keep track of connected nodes in order to create categories
  * 
  * BFS (Breadth‑First Search)
 Visits nodes level by level (all neighbors at distance 1, then distance 2, …).
@@ -36,7 +38,7 @@ const getActivityLinks = async (): Promise<{ nodes: MappedNodes[], links: Link[]
     const { nodes, links } = data;
 
     // convert nodes to something that can be used in the graph
-    const mappedNodes = mapObject<Node, MappedNodes>(nodes, (key, value, index) => {
+    const mappedNodes = mapObject<Node, MappedNodes>(nodes, (key, value) => {
 
         return {
             id: key,

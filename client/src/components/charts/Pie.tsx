@@ -101,20 +101,13 @@ const Pie = ({ data, duration }: Props) => {
 
 
     useEffect(() => {
-
-
         chartRef?.current.on("click", (params: echarts.ECElementEvent) => {
             if (params.componentType === "series" && params.seriesType === "pie" && params.data) {
                 // console.log(params.data);
                 navigate(`/links/${(params?.data as PieData).nodeId}`)
-
             }
         })
-
-
     }, []);
-
-    // useEffect(() => {
 
 
 

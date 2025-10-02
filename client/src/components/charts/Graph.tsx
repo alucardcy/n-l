@@ -1,8 +1,9 @@
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import Chart from "./Chart";
 import type { Category, Link, MappedNodes } from "@nodes-links/types";
 import type { EChartsOption } from "echarts";
 import { Box } from "@mantine/core";
+import { useNavigate } from "react-router";
 
 type Props = {
     data: {
@@ -13,6 +14,7 @@ type Props = {
 }
 const Graph = ({ data }: Props) => {
     const chartRef = useRef<any>(null);
+    const navigate = useNavigate()
 
     const option = useMemo<EChartsOption | {}>(() => {
         if (!data) return {};
@@ -62,6 +64,19 @@ const Graph = ({ data }: Props) => {
 
         }
     }, [data]);
+
+
+    useEffect(() => {
+        chartRef?.current.on("click", (params: echarts.ECElementEvent) => {
+
+            if (params.componentType === "series" && params.seriesType === "graph" && params.data) {
+                console.log(params.data);
+                navigate(`/activity/${(params.data as MappedNodes).nodeId}`)
+            }
+        })
+    }, [chartRef]);
+
+
     return (
         <Box h={{ base: "100dvh", sm: "100dvh", md: 600 }} style={{ border: "1px solid lightgray", borderRadius: 8, padding: 8 }}>
             <Chart ref={chartRef} option={option} style={{ height: "100%" }} />

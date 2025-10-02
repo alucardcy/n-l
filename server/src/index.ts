@@ -84,6 +84,7 @@ app.get("/activity/:id/links", async (req, res) => {
 });
 
 
+// returns dates range and array of active nodes count for each date
 app.get("/getActiveNodes", async (req, res) => {
     try {
         const { from, to } = req.query;
